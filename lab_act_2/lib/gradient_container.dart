@@ -14,8 +14,8 @@ class GradientContainer extends StatelessWidget {
           colors: [Colors.blue, Colors.red],
         ),
       ),
-      child: Center(child: 
-        StyledText(),
+      child: Center(
+        child: StyledText('Keith Charven'),
         ),
     );
   }
