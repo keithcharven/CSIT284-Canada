@@ -15,7 +15,7 @@ class GradientContainer extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: StyledText('Keith Charven'),
+        child: Image.asset('assets/images/dice-2.png'),
         ),
     );
   }
