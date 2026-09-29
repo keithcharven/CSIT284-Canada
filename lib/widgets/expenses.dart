@@ -5,7 +5,14 @@ import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({super.key});
+  const Expenses({
+    super.key,
+    required this.onToggleTheme,
+    required this.isDarkMode,
+  });
+
+  final void Function() onToggleTheme;
+  final bool isDarkMode;
 
   @override
   State<Expenses> createState() {
@@ -15,6 +22,7 @@ class Expenses extends StatefulWidget {
 
 class _ExpensesState extends State<Expenses> {
   Category? _selectedFilter;
+  final double _monthlyBudget = 5000.00;
 
   final List<Expense> _registeredExpenses = [
     Expense(
@@ -35,6 +43,12 @@ class _ExpensesState extends State<Expenses> {
       date: DateTime.now(),
       category: Category.leisure,
     ),
+    Expense(
+      title: 'Monthly Electric Bill',
+      amount: 2850.00,
+      date: DateTime.now(),
+      category: Category.bills,
+    ),
   ];
 
   List<Expense> get _filteredExpenses {
@@ -52,6 +66,19 @@ class _ExpensesState extends State<Expenses> {
       total += item.amount;
     }
     return total;
+  }
+
+  double get _totalAllExpenses {
+    double total = 0;
+    for (final item in _registeredExpenses) {
+      total += item.amount;
+    }
+    return total;
+  }
+
+  double get _budgetRatio {
+    if (_monthlyBudget <= 0) return 0.0;
+    return _totalAllExpenses / _monthlyBudget;
   }
 
   void _openAddExpenseOverlay() {
@@ -94,6 +121,27 @@ class _ExpensesState extends State<Expenses> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    final ratio = _budgetRatio;
+    final progressValue = ratio > 1.0 ? 1.0 : ratio;
+    final percentage = (ratio / 0.01).toStringAsFixed(1);
+
+    Color budgetBarColor = colorScheme.primary;
+    String alertMessage = 'Budget on track';
+    IconData alertIcon = Icons.check_circle_outline_rounded;
+    Color alertColor = Colors.teal;
+
+    if (ratio >= 1.0) {
+      budgetBarColor = colorScheme.error;
+      alertMessage = 'Budget Exceeded!';
+      alertIcon = Icons.error_outline_rounded;
+      alertColor = colorScheme.error;
+    } else if (ratio >= 0.8) {
+      budgetBarColor = Colors.orangeAccent;
+      alertMessage = 'Warning: Over 80% used';
+      alertIcon = Icons.warning_amber_rounded;
+      alertColor = Colors.orange;
+    }
+
     Widget mainContent = const Center(
       child: Text('No expenses found. Tap + to add one!'),
     );
@@ -110,27 +158,103 @@ class _ExpensesState extends State<Expenses> {
         title: const Text('Smart Expense Tracker'),
         actions: [
           IconButton(
+            onPressed: widget.onToggleTheme,
+            icon: Icon(
+              widget.isDarkMode
+                  ? Icons.light_mode_rounded
+                  : Icons.dark_mode_rounded,
+            ),
+            tooltip: 'Toggle Theme',
+          ),
+          IconButton(
             onPressed: _openAddExpenseOverlay,
             icon: const Icon(Icons.add_circle_outline_rounded),
+            tooltip: 'Add Expense',
           ),
         ],
       ),
       body: Column(
         children: [
           Container(
-            width: double.infinity,
             margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Monthly Budget',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(alertIcon, size: 16, color: alertColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          alertMessage,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: alertColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: progressValue,
+                    minHeight: 10,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    valueColor: AlwaysStoppedAnimation<Color>(budgetBarColor),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '₱${_totalAllExpenses.toStringAsFixed(2)} of ₱${_monthlyBudget.toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      '$percentage%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: budgetBarColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
               color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   _selectedFilter == null
-                      ? 'Total Spending'
+                      ? 'Filtered Spending'
                       : '${_selectedFilter!.name.toUpperCase()} Spending',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -140,7 +264,7 @@ class _ExpensesState extends State<Expenses> {
                 Text(
                   '₱${_totalFilteredAmount.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onPrimaryContainer,
                   ),
