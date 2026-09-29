@@ -137,7 +137,7 @@ class _ExpensesState extends State<Expenses> {
       alertColor = colorScheme.error;
     } else if (ratio >= 0.8) {
       budgetBarColor = Colors.orangeAccent;
-      alertMessage = 'Warning: Over 80% used';
+      alertMessage = 'Warning: Over 80 percent used';
       alertIcon = Icons.warning_amber_rounded;
       alertColor = Colors.orange;
     }
@@ -155,7 +155,7 @@ class _ExpensesState extends State<Expenses> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Smart Expense Tracker'),
+        title: const Text("Charven's Expense Tracker"),
         actions: [
           IconButton(
             onPressed: widget.onToggleTheme,

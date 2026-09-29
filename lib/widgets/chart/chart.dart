@@ -19,13 +19,11 @@ class Chart extends StatelessWidget {
 
   double get maxTotalExpense {
     double maxTotalExpense = 0;
-
     for (final bucket in buckets) {
       if (bucket.totalExpenses > maxTotalExpense) {
         maxTotalExpense = bucket.totalExpenses;
       }
     }
-
     return maxTotalExpense;
   }
 
@@ -35,10 +33,7 @@ class Chart extends StatelessWidget {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      padding: const EdgeInsets.symmetric(
-        vertical: 16,
-        horizontal: 8,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       width: double.infinity,
       height: 175,
       decoration: BoxDecoration(
@@ -78,10 +73,7 @@ class Chart extends StatelessWidget {
                         categoryIcons[bucket.category],
                         color: isDarkMode
                             ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: 0.8),
+                            : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                       ),
                     ),
                   ),

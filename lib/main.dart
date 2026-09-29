@@ -66,7 +66,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
             foregroundColor: Colors.white,
           ),
         ),
-        textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+        textTheme: TextTheme(
           titleLarge: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             color: const Color.fromARGB(255, 241, 245, 249),
@@ -78,7 +78,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           bodySmall: GoogleFonts.poppins(
             color: const Color.fromARGB(255, 148, 163, 184),
           ),
-        ) as TextTheme,
+        ),
       ),
       theme: ThemeData().copyWith(
         colorScheme: kColorScheme,
@@ -101,7 +101,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
             foregroundColor: Colors.white,
           ),
         ),
-        textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+        textTheme: TextTheme(
           titleLarge: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             color: const Color.fromARGB(255, 15, 23, 42),
@@ -113,7 +113,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           bodySmall: GoogleFonts.poppins(
             color: const Color.fromARGB(255, 100, 116, 139),
           ),
-        ) as TextTheme,
+        ),
       ),
       home: Expenses(
         onToggleTheme: _toggleTheme,
